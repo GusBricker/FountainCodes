@@ -1,0 +1,10 @@
+# Outputs
+*.dll
+*.exe
+*.mdb
+
+# Apple finder files
+.DS_Store
+
+# User specific files
+*.userprefs
