@@ -8,3 +8,6 @@
 
 # User specific files
 *.userprefs
+
+# NUnit outputs
+*/test-results/*
