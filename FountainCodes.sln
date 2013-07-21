@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LubyTransform", "LubyTransform\LubyTransform.csproj", "{363E6C81-F481-4630-B818-879ECFA73D37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{3387932A-65C5-4E56-BE8F-EE682E4E2DDD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3387932A-65C5-4E56-BE8F-EE682E4E2DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3387932A-65C5-4E56-BE8F-EE682E4E2DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3387932A-65C5-4E56-BE8F-EE682E4E2DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3387932A-65C5-4E56-BE8F-EE682E4E2DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{363E6C81-F481-4630-B818-879ECFA73D37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{363E6C81-F481-4630-B818-879ECFA73D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{363E6C81-F481-4630-B818-879ECFA73D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{363E6C81-F481-4630-B818-879ECFA73D37}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = LubyTransform\LubyTransform.csproj
+	EndGlobalSection
+EndGlobal
