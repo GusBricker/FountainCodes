@@ -5,7 +5,7 @@ namespace LubyTransform
 {
 	public class MyDecoder
 	{
-		private List<Drop> _caughtBlocks;
+		private List<Droplet> _caughtBlocks;
 
 		private int _blocksNeeded;
 		private int _K;
@@ -16,12 +16,20 @@ namespace LubyTransform
 			_K = k;
 			_blockSize = blockSize;
 			_blocksNeeded = blocksNeeded;
-			_caughtBlocks = new List<Drop>();
+			_caughtBlocks = new List<Droplet>();
 		}
 
-		public void Catch (Drop block)
+		public void Catch (Droplet block)
 		{
 			_caughtBlocks.Add (block);
+		}
+
+		public int CaughtBlocks
+		{
+			get
+			{
+				return _caughtBlocks.Count;
+			}
 		}
 
 		public bool CanTrySolve 
@@ -33,7 +41,7 @@ namespace LubyTransform
 					return false;
 				}
 
-				while (ExistsExactlyOneNeighbour (_caughtBlocks) != null)
+				if (ExistsExactlyOneNeighbour (_caughtBlocks) == null)
 				{
 					// If theres a ripple, we can not solve
 					return false;
@@ -49,7 +57,7 @@ namespace LubyTransform
 		 */
 		public byte[] Decode ()
 		{
-			Drop i;
+			Droplet i;
 			int j;
 			byte[][] inputBlock = new byte[_K][];
 			while ((i = ExistsExactlyOneNeighbour(_caughtBlocks)) != null)
@@ -58,7 +66,7 @@ namespace LubyTransform
 
 				inputBlock [j] = i.Data ();
 
-				foreach (Drop l in _caughtBlocks)
+				foreach (Droplet l in _caughtBlocks)
 				{
 					if (l.GetNeighbours().Contains(j) == true)
 					{
@@ -94,14 +102,14 @@ namespace LubyTransform
 		 * @return The first <code>Block</code> found, with only one connection to the source packets. 
 		 * <code>null</code> if no <code>Block</code> met the condition.
 		 */
-		private Drop ExistsExactlyOneNeighbour(List<Drop> list){
+		private Droplet ExistsExactlyOneNeighbour(List<Droplet> list){
 
 			if (list == null || list.Count == 0)
 			{
 				return null;
 			}
 
-			foreach (Drop b in list)
+			foreach (Droplet b in list)
 			{
 				if (b.GetNeighbours ().Count == 1)
 				{

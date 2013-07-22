@@ -7,9 +7,9 @@ namespace LubyTransform
 {
 	public class MyEncoder
 	{
-		private int _K;							// 1000
+		public int K { get; private set; }			// 1000
 
-		private int _blockSize;					// 32
+		public int BlockSize { get; private set; } 	// 32
 
 		private Soliton _solDist;
 
@@ -17,18 +17,18 @@ namespace LubyTransform
 
 		public MyEncoder (string data, int k, int blockSize) 
 		{
+			CommonInit (k, blockSize);
+
 			byte[] padded = Pad (Encoding.ASCII.GetBytes (data)); 
 			_data = Split (padded);
-
-			CommonInit (k, blockSize);
 		}
 
 		public MyEncoder (byte[] data, int k, int blockSize) 
 		{
+			CommonInit (k, blockSize);
+
 			byte[] padded = Pad (data);
 			_data = Split (padded);
-
-			CommonInit (k, blockSize);
 		}
 
 		private void CommonInit (int k, int blockSize)
@@ -38,12 +38,12 @@ namespace LubyTransform
 				throw new ArgumentOutOfRangeException();
 			}
 
-			this._K = k;
-			this._blockSize = blockSize;
+			this.K = k;
+			this.BlockSize = blockSize;
 
 			try 
 			{
-				_solDist = new Soliton(this._K, 0.12, 0.01);
+				_solDist = new Soliton(this.K, 0.12, 0.01);
 			}
 			catch (Exception e)
 			{
@@ -65,9 +65,9 @@ namespace LubyTransform
 	 * @return List of encoded <code>Block</code>s.
 	 * @throws NullPointerException In case the input <code>array</code> is null.
 	 */
-		public Drop BuildBlock ()
+		public Droplet BuildBlock ()
 		{
-			Drop encodingBlock = null;
+			Droplet encodingBlock = null;
 			Random rGen1 = new Random ();
 			Random rGen2 = new Random ();
 			int seed;
@@ -76,11 +76,11 @@ namespace LubyTransform
 			seed = rGen1.Next (); 
 			d = _solDist.Robust (seed);
 			rGen2 = new Random(seed);
-			encodingBlock = new Drop(seed, d, _blockSize);
+			encodingBlock = new Droplet(seed, d, BlockSize);
 
 			for(int x=1; x<=d; x++)
 			{
-				j = rGen2.Next (_K); // TODO: j <- random(1,k) -- inclusive?
+				j = rGen2.Next (K); // TODO: j <- random(1,k) -- inclusive?
 
 				encodingBlock.AddNeighbour(j);
 
@@ -104,7 +104,7 @@ namespace LubyTransform
 	 */
 		public byte[] Pad(byte[] msg)
 		{
-			byte[] padded = new byte[_K * _blockSize];
+			byte[] padded = new byte[K * BlockSize];
 
 			Array.Clear (padded, msg.Length, padded.Length - msg.Length);
 			Array.Copy (msg, padded, msg.Length);
@@ -119,19 +119,19 @@ namespace LubyTransform
 	 */
 		private byte[][] Split(byte[] padded)
 		{
-			byte[][] ret = new byte[_K][]; 
-			int j=0, beginning=0, end=_blockSize;
+			byte[][] ret = new byte[K][]; 
+			int j=0, beginning=0, end=BlockSize;
 
-			for(int i = 0; i < _K; i++, j=0)
+			for(int i = 0; i < K; i++, j=0)
 			{
-				ret[i] = new byte[_blockSize];
+				ret[i] = new byte[BlockSize];
 
 				for(int k=beginning; k<end; k++, j++){
 					ret[i][j] = padded[k];
 				}
 
-				beginning += _blockSize;
-				end += _blockSize;
+				beginning += BlockSize;
+				end += BlockSize;
 			}
 
 			return ret;
