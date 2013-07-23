@@ -30,7 +30,7 @@ namespace LubyTransform
 		/**
 	 * The encoded content of this packet.
 	 */
-		private byte[] data = null;
+		private byte[] _data = null;
 
 		/**
 	 * Size of the encoded content.
@@ -43,24 +43,24 @@ namespace LubyTransform
 	 * @param degree Degree of this packet.
 	 * @param blockSize Size of the encoded content on the packet.
 	 */
-		public Droplet(long seed, int degree, int blockSize){
+		public Droplet (long seed, int degree, int blockSize){
 			this._neighbours = new List<int>();
 			this.Seed = seed;
 			this.Degree = degree;
 			this.BlockSize = blockSize;
-			this.data = new byte[blockSize];
+			this._data = new byte[blockSize];
 		}
 
 		/**
 	 * Creates a new instance of <code>Block</code>, equal to another instance.
 	 * @param b Instance of <code>Block</code>, from which the values of the new instance will be taken.
 	 */
-		public Droplet(Droplet b){
+		public Droplet (Droplet b){
 			this._neighbours = b.GetNeighbours();
 			this.Seed = b.Seed;
 			this.Degree = b.Degree;
 			this.BlockSize = b.BlockSize;
-			this.data = b.Data();
+			this._data = b.Data();
 		}
 
 		/**
@@ -94,11 +94,11 @@ namespace LubyTransform
 	 */
 		public void setData(byte[] d)
 		{
-			data = new byte[BlockSize];
+			_data = new byte[BlockSize];
 
 			for(int i=0; i<d.Length; i++)
 			{
-				data[i] = d[i];
+				_data[i] = d[i];
 			}
 		}
 
@@ -108,11 +108,11 @@ namespace LubyTransform
 	 */
 		public byte[] Data()
 		{
-			byte[] d = new byte[this.data.Length];
+			byte[] d = new byte[this._data.Length];
 
-			for(int i=0; i<this.data.Length; i++)
+			for(int i=0; i<this._data.Length; i++)
 			{
-				d[i] = this.data[i];
+				d[i] = this._data[i];
 			}
 
 			return d;
@@ -141,7 +141,7 @@ namespace LubyTransform
 
 			for (int k = 0; k < BlockSize; k++)
 			{
-				data[k] = (byte) (data[k] ^  block[k]);
+				_data[k] = (byte) (_data[k] ^  block[k]);
 			}
 
 			_neighbours.Remove (j);
@@ -156,26 +156,26 @@ namespace LubyTransform
 		public void Xor (byte[] input) 
 		{ 
 
-			if(data == null || input == null) 
+			if(_data == null || input == null) 
 			{
 				throw new ArgumentNullException(); 
 			}
 
-			if(input.Length >= data.Length)
+			if(input.Length >= _data.Length)
 			{
-				for (int i=0; i<data.Length; i++)
+				for (int i=0; i<_data.Length; i++)
 				{
-					data[i] = (byte)(data[i] ^ input[i]);
+					_data[i] = (byte)(_data[i] ^ input[i]);
 				}
 			}
 			else
 			{
-				byte[] aux = new byte[data.Length];
-				Array.Copy (input, aux, data.Length);
+				byte[] aux = new byte[_data.Length];
+				Array.Copy (input, aux, _data.Length);
 
-				for (int i=0; i<data.Length; i++)
+				for (int i=0; i<_data.Length; i++)
 				{
-					data[i] = (byte)(data[i] ^ aux[i]);
+					_data[i] = (byte)(_data[i] ^ aux[i]);
 				}
 			}
 		}
