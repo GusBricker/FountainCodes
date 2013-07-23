@@ -10,6 +10,7 @@ namespace LubyTransform
 		private int _blocksNeeded;
 		private int _K;
 		private int _blockSize;
+		private byte[][] _decodedData;
 
 		public MyDecoder (int k, int blockSize, int blocksNeeded)
 		{
@@ -17,6 +18,7 @@ namespace LubyTransform
 			_blockSize = blockSize;
 			_blocksNeeded = blocksNeeded;
 			_caughtBlocks = new List<Droplet>();
+			_decodedData = new byte[_K][];
 		}
 
 		public void Catch (Droplet block)
@@ -41,10 +43,12 @@ namespace LubyTransform
 					return false;
 				}
 
-				if (ExistsExactlyOneNeighbour (_caughtBlocks) == null)
+				foreach (Droplet d in _caughtBlocks)
 				{
-					// If theres a ripple, we can not solve
-					return false;
+					if (d.GetNeighbours ().Count == 0)
+					{
+						return false;
+					}
 				}
 
 				return true;
@@ -59,24 +63,26 @@ namespace LubyTransform
 		{
 			Droplet i;
 			int j;
-			byte[][] inputBlock = new byte[_K][];
-			while ((i = ExistsExactlyOneNeighbour(_caughtBlocks)) != null)
-			{ // If does not exist, and ripple is empty, then it's a fail.
+
+			while ((i = ExistsNeighbours(_caughtBlocks)) != null)
+			{ 
+				// If does not exist, and ripple is empty, then it's a fail.
 				j = i.GetNeighbours () [0];
 
-				inputBlock [j] = i.Data ();
+				_decodedData [j] = i.Data ();
 
 				foreach (Droplet l in _caughtBlocks)
 				{
 					if (l.GetNeighbours().Contains(j) == true)
 					{
-						l.Xor(inputBlock[j]);
+						l.Xor(_decodedData[j]);
 						l.RemoveNeighbour(j);
 					}
 				}
+				_caughtBlocks.Remove (i);
 			}
 
-			return(Merge(inputBlock));
+			return(Merge(_decodedData));
 		}
 
 		/**
@@ -90,9 +96,17 @@ namespace LubyTransform
 			byte[] ret = new byte[blocks * _blockSize];
 
 			for (int i = 0, ini = 0; i < blocks; i++, ini += _blockSize)
-				for (int j = 0; j < _blockSize; j++)
-					ret[ini + j] = inputBlock[i][j];
+			{
+				if (inputBlock [i] == null)
+				{
+					return null;
+				}
 
+				for (int j = 0; j < _blockSize; j++)
+				{
+					ret[ini + j] = inputBlock[i][j];
+				}
+			}
 			return ret;
 		}
 
@@ -102,6 +116,24 @@ namespace LubyTransform
 		 * @return The first <code>Block</code> found, with only one connection to the source packets. 
 		 * <code>null</code> if no <code>Block</code> met the condition.
 		 */
+		private Droplet ExistsNeighbours(List<Droplet> list){
+
+			if (list == null || list.Count == 0)
+			{
+				return null;
+			}
+
+			foreach (Droplet b in list)
+			{
+				if (b.GetNeighbours ().Count > 0)
+				{
+					return b;
+				}
+			}
+
+			return null;
+		}
+
 		private Droplet ExistsExactlyOneNeighbour(List<Droplet> list){
 
 			if (list == null || list.Count == 0)
