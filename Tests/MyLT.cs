@@ -33,7 +33,7 @@ namespace Tests
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, 100, 50);
+			MyEncoder enc = new MyEncoder (origFile, 1000, 500);
 			MyDecoder dec = new MyDecoder (enc.K, enc.BlockSize, enc.BlocksNeeded);
 
 			for (int i=0; i<enc.BlocksNeeded; i++)
@@ -53,6 +53,11 @@ namespace Tests
 				else
 				{
 					decFile = dec.Decode ();
+					if (decFile == null)
+					{
+						continue;
+					}
+
 					if (HashBytes (decFile) == origHash)
 					{
 						Console.WriteLine ("Decoded after: {0}", dec.CaughtBlocks);
