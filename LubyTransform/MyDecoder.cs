@@ -60,7 +60,7 @@ namespace LubyTransform
 			while (_dropQueue.Count >= 1)
 			{
 				d = _dropQueue.Dequeue ();
-				neighbours = d.GetNeighbours ();
+				neighbours = d.Neighbours;
 
 				if (neighbours.Count > 1)
 				{
@@ -74,7 +74,7 @@ namespace LubyTransform
 						_decodedData[neighbourOffset] = new byte[_blockSize];
 
 						// No neighbours? Means the actual data is contained in this droplet
-						Array.Copy (d.Data (), _decodedData[neighbourOffset], _blockSize);
+						Array.Copy (d.Data, _decodedData[neighbourOffset], _blockSize);
 					}
 				}
 			}
@@ -95,7 +95,7 @@ namespace LubyTransform
 				{
 					// Setup the block we are about to decode
 					_decodedData [solvingFor] = new byte[_blockSize];
-					Array.Copy (d.Data(), _decodedData[solvingFor], _blockSize);
+					Array.Copy (d.Data, _decodedData[solvingFor], _blockSize);
 
 					// Try solve this one
 					for (int othersIndex=0; othersIndex<neighbours.Count; othersIndex++)
@@ -177,47 +177,6 @@ namespace LubyTransform
 			return ret;
 		}
 
-		/**
-		 * Checks the elements of a given list, if there is one with a single connection to the source packets.
-		 * @param list List of <code>Block</code>s.
-		 * @return The first <code>Block</code> found, with only one connection to the source packets. 
-		 * <code>null</code> if no <code>Block</code> met the condition.
-		 */
-		private Droplet ExistsNeighbours(List<Droplet> list){
-
-			if (list == null || list.Count == 0)
-			{
-				return null;
-			}
-
-			foreach (Droplet b in list)
-			{
-				if (b.GetNeighbours ().Count > 0)
-				{
-					return b;
-				}
-			}
-
-			return null;
-		}
-
-		private Droplet ExistsExactlyOneNeighbour(List<Droplet> list){
-
-			if (list == null || list.Count == 0)
-			{
-				return null;
-			}
-
-			foreach (Droplet b in list)
-			{
-				if (b.GetNeighbours ().Count == 1)
-				{
-					return b;
-				}
-			}
-
-			return null;
-		}
 	}
 }
 

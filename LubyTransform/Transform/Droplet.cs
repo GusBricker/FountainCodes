@@ -30,7 +30,7 @@ namespace LubyTransform
 		/**
 	 * The encoded content of this packet.
 	 */
-		private byte[] _data = null;
+		private byte[] _data;
 
 		/**
 	 * Size of the encoded content.
@@ -44,11 +44,11 @@ namespace LubyTransform
 	 * @param blockSize Size of the encoded content on the packet.
 	 */
 		public Droplet (long seed, int degree, int blockSize){
-			this._neighbours = new List<int>();
-			this.Seed = seed;
-			this.Degree = degree;
-			this.BlockSize = blockSize;
-			this._data = new byte[blockSize];
+			_neighbours = new List<int>();
+			Seed = seed;
+			Degree = degree;
+			BlockSize = blockSize;
+			_data = new byte[blockSize];
 		}
 
 		/**
@@ -56,49 +56,24 @@ namespace LubyTransform
 	 * @param b Instance of <code>Block</code>, from which the values of the new instance will be taken.
 	 */
 		public Droplet (Droplet b){
-			this._neighbours = b.GetNeighbours();
-			this.Seed = b.Seed;
-			this.Degree = b.Degree;
-			this.BlockSize = b.BlockSize;
-			this._data = b.Data();
+			_neighbours = b.Neighbours;
+			Seed = b.Seed;
+			Degree = b.Degree;
+			BlockSize = b.BlockSize;
+			_data = b.Data;
 		}
 
 		/**
 	 * Returns (a copy of) the list of connections this packet has with the source packets.
 	 * @return A copy of the list of connections this packet has with the source packets.
 	 */
-		public List<int> GetNeighbours() 
+		public List<int> Neighbours
 		{
-			List<int> ret = new List<int> (_neighbours);
-
-			return ret;
-		}
-
-		/**
-	 * Sets a new list of connections with the source packets.
-	 * @param neighbours New list of connections with the source packets - will be deep copied.
-	 */
-		public void SetNeighbours(List<int> neighbours) 
-		{
-			this._neighbours.Clear();
-
-			foreach (int i in neighbours)
+			get
 			{
-				this._neighbours.Add(i);
-			}
-		}
+				List<int> ret = new List<int> (_neighbours);
 
-		/**
-	 * Sets the encoded content of this packet.
-	 * @param d Encoded packet of this packet.
-	 */
-		public void setData(byte[] d)
-		{
-			_data = new byte[BlockSize];
-
-			for(int i=0; i<d.Length; i++)
-			{
-				_data[i] = d[i];
+				return ret;
 			}
 		}
 
@@ -106,16 +81,19 @@ namespace LubyTransform
 	 * Returns the encoded content of this packet.
 	 * @return The encoded content of this packet.
 	 */
-		public byte[] Data()
+		public byte[] Data
 		{
-			byte[] d = new byte[this._data.Length];
-
-			for(int i=0; i<this._data.Length; i++)
+			get
 			{
-				d[i] = this._data[i];
+				return _data;
 			}
-
-			return d;
+			set
+			{
+				for(int i=0; i<_data.Length; i++)
+				{
+					_data[i] = value[i];
+				}
+			}
 		}
 
 		/**
@@ -136,49 +114,6 @@ namespace LubyTransform
 			_neighbours.Remove (i);
 		}
 
-		public void RemoveNeighbourXOR(int j, byte[] block)
-		{
-
-			for (int k = 0; k < BlockSize; k++)
-			{
-				_data[k] = (byte) (_data[k] ^  block[k]);
-			}
-
-			_neighbours.Remove (j);
-		}
-
-		/**
-	 * XORs the <code>input</code> given with the encoded content of this packet.
-	 * @param input Input to be XORed with the encoded content of this packet. Will be truncated if bigger than 
-	 * <code>blockSize</code>, and padded with '0's if shorter.
-	 * @throws NullPointerException In case <code>data</code> or <code>input</code> are <code>null</code>.
-	 */
-		public void Xor (byte[] input) 
-		{ 
-
-			if(_data == null || input == null) 
-			{
-				throw new ArgumentNullException(); 
-			}
-
-			if(input.Length >= _data.Length)
-			{
-				for (int i=0; i<_data.Length; i++)
-				{
-					_data[i] = (byte)(_data[i] ^ input[i]);
-				}
-			}
-			else
-			{
-				byte[] aux = new byte[_data.Length];
-				Array.Copy (input, aux, _data.Length);
-
-				for (int i=0; i<_data.Length; i++)
-				{
-					_data[i] = (byte)(_data[i] ^ aux[i]);
-				}
-			}
-		}
 
 		/**
 	 * Returns a deep copy of this packet.

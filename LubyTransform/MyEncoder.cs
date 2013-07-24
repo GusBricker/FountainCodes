@@ -43,7 +43,7 @@ namespace LubyTransform
 
 			try 
 			{
-				_solDist = new Soliton(this.K, 0.12, 0.01);
+				_solDist = new Soliton(this.K, 1.0, 0.001);
 			}
 			catch (Exception e)
 			{
@@ -82,7 +82,7 @@ namespace LubyTransform
 			{
 				// Get a block offset
 				neighbourOffset = rGen2.Next (K); 
-				if (encodingBlock.GetNeighbours ().Contains (neighbourOffset) == true)
+				if (encodingBlock.Neighbours.Contains (neighbourOffset) == true)
 				{
 					// No point in allowing duplicate neighbours, is just wasted processing time...
 					continue;
@@ -92,11 +92,11 @@ namespace LubyTransform
 
 				if (numNeighbours == 1)
 				{
-					encodingBlock.setData(_data[neighbourOffset]);
+					encodingBlock.Data = _data[neighbourOffset];
 				}
 				else
 				{
-					encodingBlock.Xor(_data[neighbourOffset]);
+					XorInto (encodingBlock.Data, _data [neighbourOffset]);
 				}
 			}
 
@@ -142,6 +142,35 @@ namespace LubyTransform
 
 			return ret;
 		}	
+
+		private static void XorInto (byte[] target, byte[] data)
+		{
+			for (int i=0; i<target.Length; i++)
+			{
+				target [i] ^= data [i];
+			}
+		}
+
+//		private static void Xor (byte[] input) 
+//		{ 
+//			if(input.Length >= _data.Length)
+//			{
+//				for (int i=0; i<_data.Length; i++)
+//				{
+//					_data[i] = (byte)(_data[i] ^ input[i]);
+//				}
+//			}
+//			else
+//			{
+//				byte[] aux = new byte[_data.Length];
+//				Array.Copy (input, aux, _data.Length);
+//
+//				for (int i=0; i<_data.Length; i++)
+//				{
+//					_data[i] = (byte)(_data[i] ^ aux[i]);
+//				}
+//			}
+//		}
 	}
 }
 

@@ -32,11 +32,11 @@ namespace ConsoleTests
 
 		public static void EncodeDecode ()
 		{
-			byte[] origFile = BuildRandomFile (100000);
+			byte[] origFile = BuildRandomFile (1000000);
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, 10000);
+			MyEncoder enc = new MyEncoder (origFile, origFile.Length/10);
 			MyDecoder dec = new MyDecoder (enc.K, enc.BlockSize, enc.BlocksNeeded);
 			byte[] decFile;
 
@@ -52,9 +52,11 @@ namespace ConsoleTests
 
 				if (HashBytes (decFile) == origHash)
 				{
-					Console.WriteLine ("Decoded after: {0}, required: {1}", 
+					Console.WriteLine ("Decoded after: {0}, required: {1}, K: {2}, blocksize: {3}", 
 					                   dec.CaughtDrops,
-					                   enc.BlocksNeeded);
+					                   enc.BlocksNeeded,
+					                   enc.K,
+					                   enc.BlockSize);
 					break;
 				}
 				else
