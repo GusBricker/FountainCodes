@@ -5,7 +5,8 @@ namespace LubyTransform
 {
 	public class MyDecoder
 	{
-		private List<Droplet> _caughtBlocks;
+		private Queue<Droplet> _dropQueue;
+		public int CaughtDrops { get; private set; }
 
 		private int _blocksNeeded;
 		private int _K;
@@ -17,38 +18,29 @@ namespace LubyTransform
 			_K = k;
 			_blockSize = blockSize;
 			_blocksNeeded = blocksNeeded;
-			_caughtBlocks = new List<Droplet>();
+			_dropQueue = new Queue<Droplet>();
 			_decodedData = new byte[_K][];
+			CaughtDrops = 0;
+
+			for (int i=0; i<_K; i++)
+			{
+				_decodedData [i] = null;
+			}
 		}
 
 		public void Catch (Droplet block)
 		{
-			_caughtBlocks.Add (block);
-		}
-
-		public int CaughtBlocks
-		{
-			get
-			{
-				return _caughtBlocks.Count;
-			}
+			_dropQueue.Enqueue (block);
+			CaughtDrops++;
 		}
 
 		public bool CanTrySolve 
 		{
 			get
 			{
-				if (_caughtBlocks.Count < _blocksNeeded)
+				if (CaughtDrops < _blocksNeeded)
 				{
 					return false;
-				}
-
-				foreach (Droplet d in _caughtBlocks)
-				{
-					if (d.GetNeighbours ().Count == 0)
-					{
-						return false;
-					}
 				}
 
 				return true;
@@ -61,29 +53,104 @@ namespace LubyTransform
 		 */
 		public byte[] Decode ()
 		{
-			Droplet i;
-			int j;
+			List<int> neighbours;
+			int neighbourOffset;
+			Droplet d;
 
-			while ((i = ExistsNeighbours(_caughtBlocks)) != null)
-			{ 
-				// If does not exist, and ripple is empty, then it's a fail.
-				j = i.GetNeighbours () [0];
+			while (_dropQueue.Count >= 1)
+			{
+				d = _dropQueue.Dequeue ();
+				neighbours = d.GetNeighbours ();
 
-				_decodedData [j] = i.Data ();
-
-				foreach (Droplet l in _caughtBlocks)
+				if (neighbours.Count > 1)
 				{
-					if (l.GetNeighbours().Contains(j) == true)
+					Solve (d, neighbours);
+				}
+				else
+				{
+					neighbourOffset = neighbours[0];
+					if (_decodedData[neighbourOffset] == null)
 					{
-						l.Xor(_decodedData[j]);
-						l.RemoveNeighbour(j);
+						_decodedData[neighbourOffset] = new byte[_blockSize];
+
+						// No neighbours? Means the actual data is contained in this droplet
+						Array.Copy (d.Data (), _decodedData[neighbourOffset], _blockSize);
 					}
 				}
-				_caughtBlocks.Remove (i);
 			}
 
-			return(Merge(_decodedData));
+			return Merge (_decodedData);
 		}
+
+		private void Solve (Droplet d, List<int> neighbours)
+		{
+			int solvingFor;
+			int neighbourIndex;
+
+			for (int index=0; index<neighbours.Count; index++)
+			{
+				solvingFor = neighbours [index];
+
+				if (_decodedData [solvingFor] == null)
+				{
+					// Setup the block we are about to decode
+					_decodedData [solvingFor] = new byte[_blockSize];
+					Array.Copy (d.Data(), _decodedData[solvingFor], _blockSize);
+
+					// Try solve this one
+					for (int othersIndex=0; othersIndex<neighbours.Count; othersIndex++)
+					{
+						if (othersIndex == index)
+						{
+							continue;
+						}
+						neighbourIndex = neighbours [othersIndex];
+
+						if (_decodedData [neighbourIndex] == null)
+						{
+							// We can solve, bomb out
+							_decodedData [solvingFor] = null;
+							break;
+						}
+						XorInto (_decodedData [solvingFor], _decodedData [neighbourIndex]);
+					}
+				}
+			}
+		}
+
+		private static void XorInto (byte[] target, byte[] data)
+		{
+			for (int i=0; i<target.Length; i++)
+			{
+				target [i] ^= data [i];
+			}
+		}
+
+//		public byte[] Decode ()
+//		{
+//			Droplet i;
+//			int j;
+//
+//			while ((i = ExistsNeighbours(_caughtBlocks)) != null)
+//			{ 
+//				// If does not exist, and ripple is empty, then it's a fail.
+//				j = i.GetNeighbours () [0];
+//
+//				_decodedData [j] = i.Data ();
+//
+//				foreach (Droplet l in _caughtBlocks)
+//				{
+//					if (l.GetNeighbours().Contains(j) == true)
+//					{
+//						l.Xor(_decodedData[j]);
+//						l.RemoveNeighbour(j);
+//					}
+//				}
+//				_caughtBlocks.Remove (i);
+//			}
+//
+//			return(Merge(_decodedData));
+//		}
 
 		/**
 		 * Merges a matrix into an <code>array</code>

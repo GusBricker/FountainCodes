@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LubyTransform.Distributions;
 
 namespace LubyTransform.Transform
 {
@@ -8,11 +9,12 @@ namespace LubyTransform.Transform
     {
         #region Member Variables
 
-        readonly IList<byte[]> blocks;
-        readonly int degree;
-        readonly Random rand;
-        readonly int fileSize;
-        const int chunkSize = 2;
+        private IList<byte[]> _blocks;
+        private int _degree;
+        private Random _rand;
+//		private Soliton _randSol;
+        private int _fileSize;
+		private int _chunkSize;
 
         #endregion
 
@@ -20,12 +22,15 @@ namespace LubyTransform.Transform
 
         public Encode(byte[] file)
         {
-            rand = new Random();
-            fileSize = file.Length;
-            blocks = CreateBlocks(file);
-            degree = blocks.Count / 2;
-            degree += 2;
+			_chunkSize = 2;
+			CommonInit (file);
         }
+
+        public Encode(byte[] file, int chunkSize)
+		{
+			_chunkSize = chunkSize;
+			CommonInit (file);
+		}
 
         #endregion
 
@@ -38,11 +43,11 @@ namespace LubyTransform.Transform
 
             if (selectedParts.Length > 1)
             {
-                data = CreateDropData(selectedParts, blocks, chunkSize);
+                data = CreateDropData(selectedParts, _blocks, _chunkSize);
             }
             else
             {
-                data = blocks[selectedParts[0]];
+                data = _blocks[selectedParts[0]];
             }
 
             return new Drop { SelectedParts = selectedParts, Data = data };
@@ -50,26 +55,36 @@ namespace LubyTransform.Transform
 
         int IEncode.NumberOfBlocks
         {
-            get { return blocks.Count; }
+            get { return _blocks.Count; }
         }
 
         int IEncode.ChunkSize
         {
-            get { return chunkSize; }
+            get { return _chunkSize; }
         }
 
         int IEncode.FileSize
         {
-            get { return fileSize; }
+            get { return _fileSize; }
         }
 
         #endregion
 
         #region Private Methods
 
+		private void CommonInit (byte[] file)
+		{
+            _rand = new Random();
+            _fileSize = file.Length;
+            _blocks = CreateBlocks(file);
+            _degree = _blocks.Count / 2;
+            _degree += 2;
+//			_randSol = new Soliton (_blocks.Count, 5, 0.5);
+		}
+
         private IList<byte[]> CreateBlocks(byte[] file)
         {
-            var size = chunkSize;
+            var size = _chunkSize;
             var blocksCount = Math.Ceiling((decimal)file.Length / size);
             var remainingSize = file.Length;
             var blocks = new List<byte[]>();
@@ -85,15 +100,15 @@ namespace LubyTransform.Transform
                     size = remainingSize;
                 }
 
-                var block = file.Skip(i * chunkSize).Take(size).ToArray();
+                var block = file.Skip(i * _chunkSize).Take(size).ToArray();
 
-                if (block.Length >= chunkSize)
+                if (block.Length >= _chunkSize)
                 {
                     blocks.Add(block);
                 }
                 else
                 {
-                    var chunk = new byte[chunkSize];
+                    var chunk = new byte[_chunkSize];
                     Array.Copy(block, 0, chunk, 0, block.Length);
                     blocks.Add(chunk);
                 }
@@ -104,13 +119,15 @@ namespace LubyTransform.Transform
 
         private int[] GetSelectedParts()
         {
-            int length = rand.Next(1, degree);
+            int length = _rand.Next(1, _degree);
+//			int length = _randSol.Robust (_degree);
             var selectedParts = new Dictionary<int, int>();
             for (int j = 0; j < length; j++)
             {
                 while (true)
                 {
-                    var part = rand.Next(blocks.Count());
+                    var part = _rand.Next(_blocks.Count());
+//					int part = _randSol.Robust (_blocks.Count ());
                     if (!selectedParts.ContainsKey(part))
                     {
                         selectedParts.Add(part, part);

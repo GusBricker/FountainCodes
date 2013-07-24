@@ -15,30 +15,30 @@ namespace LubyTransform
 
 		private byte[][] _data;
 
-		public MyEncoder (string data, int k, int blockSize) 
+		public MyEncoder (string data, int blockSize) 
 		{
-			CommonInit (k, blockSize);
+			CommonInit (data.Length, blockSize);
 
 			byte[] padded = Pad (Encoding.ASCII.GetBytes (data)); 
 			_data = Split (padded);
 		}
 
-		public MyEncoder (byte[] data, int k, int blockSize) 
+		public MyEncoder (byte[] data, int blockSize) 
 		{
-			CommonInit (k, blockSize);
+			CommonInit (data.Length, blockSize);
 
 			byte[] padded = Pad (data);
 			_data = Split (padded);
 		}
 
-		private void CommonInit (int k, int blockSize)
+		private void CommonInit (int length, int blockSize)
 		{
-			if (k <= 0 || blockSize <= 0)
+			if (blockSize <= 0)
 			{
 				throw new ArgumentOutOfRangeException();
 			}
 
-			this.K = k;
+			this.K = (int)Math.Ceiling ((double)(length / blockSize));
 			this.BlockSize = blockSize;
 
 			try 
@@ -71,26 +71,32 @@ namespace LubyTransform
 			Random rGen1 = new Random ();
 			Random rGen2 = new Random ();
 			int seed;
-			int d=0, j;
+			int d=0, neighbourOffset;
 
 			seed = rGen1.Next (); 
 			d = _solDist.Robust (seed);
-			rGen2 = new Random(seed);
+			rGen2 = new Random (seed);
 			encodingBlock = new Droplet(seed, d, BlockSize);
 
-			for(int x=1; x<=d; x++)
+			for (int numNeighbours=1; numNeighbours<=d; numNeighbours++)
 			{
-				j = rGen2.Next (K); // TODO: j <- random(1,k) -- inclusive?
-
-				encodingBlock.AddNeighbour(j);
-
-				if(x == 1)
+				// Get a block offset
+				neighbourOffset = rGen2.Next (K); 
+				if (encodingBlock.GetNeighbours ().Contains (neighbourOffset) == true)
 				{
-					encodingBlock.setData(_data[j]);
+					// No point in allowing duplicate neighbours, is just wasted processing time...
+					continue;
+				}
+
+				encodingBlock.AddNeighbour(neighbourOffset);
+
+				if (numNeighbours == 1)
+				{
+					encodingBlock.setData(_data[neighbourOffset]);
 				}
 				else
 				{
-					encodingBlock.Xor(_data[j]);
+					encodingBlock.Xor(_data[neighbourOffset]);
 				}
 			}
 

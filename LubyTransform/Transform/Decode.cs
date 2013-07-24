@@ -22,10 +22,15 @@ namespace LubyTransform.Transform
 
         #region IDecode
 
-        byte[] IDecode.Decode(IList<Drop> goblet, int blocksCount, int chunkSize, int fileSize)
+        bool IDecode.Decode(IList<Drop> goblet, int blocksCount, int chunkSize, int fileSize, out byte[] data)
         {
+			data = null;
             var matrix = BuildMatrix(goblet, blocksCount, chunkSize);
-            matrixSolver.Solve(matrix);
+			if (matrixSolver.Solve (matrix) == false)
+			{
+				return false;
+			}
+
             int columnsCount = matrix.GetLength(1);
             byte[] result = new byte[fileSize];
 
@@ -34,7 +39,9 @@ namespace LubyTransform.Transform
                 result[i] = (byte)matrix[i, columnsCount - 1];
             }
 
-            return result;
+			data = result;
+
+            return true;
         }
 
         #endregion

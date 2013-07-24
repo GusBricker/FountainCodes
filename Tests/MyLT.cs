@@ -29,11 +29,11 @@ namespace Tests
 		[Test()]
 		public void EncodeDecode ()
 		{
-			byte[] origFile = BuildRandomFile (1000);
+			byte[] origFile = BuildRandomFile (100);
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, 1000, 500);
+			MyEncoder enc = new MyEncoder (origFile, 5);
 			MyDecoder dec = new MyDecoder (enc.K, enc.BlockSize, enc.BlocksNeeded);
 
 			for (int i=0; i<enc.BlocksNeeded; i++)
@@ -62,6 +62,15 @@ namespace Tests
 					{
 						Console.WriteLine ("Decoded after: {0}", dec.CaughtBlocks);
 						break;
+					}
+					else
+					{
+						for (int i=0; i<decFile.Length; i++)
+						{
+							Console.WriteLine ("D: 0x{0} : 0x{1}", 
+							                   Convert.ToString (origFile [i], 16),
+							                   Convert.ToString (decFile [i], 16));
+						}
 					}
 				}
 			}
