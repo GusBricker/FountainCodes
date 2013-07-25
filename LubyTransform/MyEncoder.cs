@@ -38,8 +38,9 @@ namespace LubyTransform
 				throw new ArgumentOutOfRangeException();
 			}
 
-			this.K = (int)Math.Ceiling ((double)(length / blockSize));
-			this.BlockSize = blockSize;
+			Size = length;
+			K = (int)Math.Ceiling ((double)length / (double)blockSize);
+			BlockSize = blockSize;
 
 			try 
 			{
