@@ -12,9 +12,14 @@ namespace LubyTransform
 		private int _K;
 		private int _blockSize;
 		private byte[][] _decodedData;
+		private int _originalSize;
 
-		public MyDecoder (int k, int blockSize, int blocksNeeded)
+		public MyDecoder (int k, 
+		                  int blockSize, 
+		                  int blocksNeeded,
+		                  int originalSize)
 		{
+			_originalSize = originalSize;
 			_K = k;
 			_blockSize = blockSize;
 			_blocksNeeded = blocksNeeded;
@@ -160,21 +165,45 @@ namespace LubyTransform
 		private byte[] Merge(byte[][] inputBlock){
 
 			int blocks = inputBlock.Length;
-			byte[] ret = new byte[blocks * _blockSize];
+			List<byte> ret = new List<byte> ();
+			int upTo = 0;
 
-			for (int i = 0, ini = 0; i < blocks; i++, ini += _blockSize)
+			for (int i=0; i<inputBlock.Length; i++)
 			{
 				if (inputBlock [i] == null)
 				{
 					return null;
 				}
 
-				for (int j = 0; j < _blockSize; j++)
+				if ((_originalSize - upTo) > _blockSize)
 				{
-					ret[ini + j] = inputBlock[i][j];
+					ret.AddRange (inputBlock [i]);
 				}
+				else
+				{
+					// Last block
+					for (int j=0; j<_originalSize-upTo; j++)
+					{
+						ret.Add (inputBlock[i][j]);
+					}
+					break;
+				}
+				upTo += _blockSize;
 			}
-			return ret;
+
+//			for (int i = 0, ini = 0; i < blocks; i++, ini += _blockSize)
+//			{
+//				if (inputBlock [i] == null)
+//				{
+//					return null;
+//				}
+//
+//				for (int j = 0; j < _blockSize; j++)
+//				{
+//					ret[ini + j] = inputBlock[i][j];
+//				}
+//			}
+			return ret.ToArray();
 		}
 
 	}
