@@ -7,13 +7,23 @@ namespace LubyTransform
 {
 	public class MyEncoder
 	{
-		public int K { get; private set; }			// 1000
+		public int K { get; private set; }
 
-		public int BlockSize { get; private set; } 	// 32
+		public int BlockSize { get; private set; } 	
 
 		private Soliton _solDist;
 
 		private byte[][] _data;
+
+		public int PaddedSize
+		{
+			get
+			{
+				return K * BlockSize; 
+			}
+		}
+
+		public int Size { get; private set; }
 
 		public MyEncoder (string data, int blockSize) 
 		{
@@ -44,7 +54,7 @@ namespace LubyTransform
 
 			try 
 			{
-				_solDist = new Soliton(this.K, 1.0, 0.001);
+				_solDist = new Soliton(this.K, 1.0, 0.01);
 			}
 			catch (Exception e)
 			{
