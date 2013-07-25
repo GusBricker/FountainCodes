@@ -11,6 +11,22 @@ namespace ConsoleTests
 		{
 			Console.WriteLine ("Hello World!");
 			EncodeDecode ();
+		private static void DisplaySoliton (int count)
+		{
+			Soliton s = new Soliton (count, 0.01, 0.01);
+			int max;
+			Random r = new Random ();
+
+			for (int i=0; i<count; i++)
+			{
+				max = s.Robust (r.Next (count));
+
+				for (int a=0; a<max; a++)
+				{
+					Console.Write ("=");
+				}
+				Console.WriteLine ();
+			}
 		}
 
 		private static byte[] BuildRandomFile (int size)
