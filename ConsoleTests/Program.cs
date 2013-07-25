@@ -2,6 +2,7 @@ using System;
 using LubyTransform;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using LubyTransform.Distributions;
 
 namespace ConsoleTests
 {
@@ -9,8 +10,11 @@ namespace ConsoleTests
 	{
 		public static void Main (string[] args)
 		{
-			Console.WriteLine ("Hello World!");
+//			Console.WriteLine ("Hello World!");
 			EncodeDecode ();
+//			DisplaySoliton (40);
+		}
+
 		private static void DisplaySoliton (int count)
 		{
 			Soliton s = new Soliton (count, 0.01, 0.01);
@@ -48,12 +52,15 @@ namespace ConsoleTests
 
 		public static void EncodeDecode ()
 		{
-			byte[] origFile = BuildRandomFile (1000000);
+			byte[] origFile = BuildRandomFile (123);
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, origFile.Length/10);
-			MyDecoder dec = new MyDecoder (enc.K, enc.BlockSize, enc.BlocksNeeded);
+			MyEncoder enc = new MyEncoder (origFile, 10);
+			MyDecoder dec = new MyDecoder (enc.K, 
+			                               enc.BlockSize, 
+			                               enc.BlocksNeeded,
+			                               enc.Size);
 			byte[] decFile;
 
 			while (true)
