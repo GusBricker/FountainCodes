@@ -46,6 +46,9 @@
     <Compile Include="MyEncoder.cs" />
     <Compile Include="MyDecoder.cs" />
     <Compile Include="Transform\Droplet.cs" />
+    <Compile Include="Distributions\GoldenGate.cs" />
+    <Compile Include="Distributions\IDistribution.cs" />
+    <Compile Include="Distributions\Ramping.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

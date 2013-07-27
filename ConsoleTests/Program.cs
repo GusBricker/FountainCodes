@@ -13,6 +13,25 @@ namespace ConsoleTests
 //			Console.WriteLine ("Hello World!");
 			EncodeDecode ();
 //			DisplaySoliton (40);
+//			DisplayGoldenGate (40);
+		}
+
+		private static void DisplayGoldenGate (int count)
+		{
+			GoldenGate g = new GoldenGate (count/2, 4.8, 10, 4);
+			int max;
+			Random r = new Random ();
+
+			for (int i=0; i<count; i++)
+			{
+				max = g.Degree (r.Next (count));
+
+				for (int a=0; a<max; a++)
+				{
+					Console.Write ("=");
+				}
+				Console.WriteLine ();
+			}
 		}
 
 		private static void DisplaySoliton (int count)
@@ -23,7 +42,7 @@ namespace ConsoleTests
 
 			for (int i=0; i<count; i++)
 			{
-				max = s.Robust (r.Next (count));
+				max = s.Degree (r.Next (count));
 
 				for (int a=0; a<max; a++)
 				{
@@ -52,24 +71,28 @@ namespace ConsoleTests
 
 		public static void EncodeDecode ()
 		{
-			byte[] origFile = BuildRandomFile (123);
+			byte[] origFile = BuildRandomFile (1122);
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, 10);
+			MyEncoder enc = new MyEncoder (origFile, 100);
 			MyDecoder dec = new MyDecoder (enc.K, 
 			                               enc.BlockSize, 
 			                               enc.BlocksNeeded,
 			                               enc.Size);
 			byte[] decFile;
 
-			while (true)
+			for (int i=0; i<enc.K; i++)
 			{
 				dec.Catch (enc.BuildBlock ());
+			}
 
+			while (true)
+			{
 				decFile = dec.Decode ();
 				if (decFile == null)
 				{
+					dec.Catch (enc.BuildBlock ());
 					continue;
 				}
 
@@ -80,6 +103,7 @@ namespace ConsoleTests
 					                   enc.BlocksNeeded,
 					                   enc.K,
 					                   enc.BlockSize);
+					Console.WriteLine ("Efficiency: {0}", (((double)enc.K / (double)dec.CaughtDrops)).ToString ("000.0%"));
 					break;
 				}
 				else

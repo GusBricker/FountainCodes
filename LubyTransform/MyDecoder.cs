@@ -5,8 +5,10 @@ namespace LubyTransform
 {
 	public class MyDecoder
 	{
-		private Queue<Droplet> _dropQueue;
+		private Dictionary<uint, List<Droplet>> _drops;
 		public int CaughtDrops { get; private set; }
+		private uint _maxCaughtDegree;
+		private uint _minCaughtDegree;
 
 		private int _blocksNeeded;
 		private int _K;
@@ -19,11 +21,13 @@ namespace LubyTransform
 		                  int blocksNeeded,
 		                  int originalSize)
 		{
+			_minCaughtDegree = UInt32.MaxValue;
+			_maxCaughtDegree = 0;
 			_originalSize = originalSize;
 			_K = k;
 			_blockSize = blockSize;
 			_blocksNeeded = blocksNeeded;
-			_dropQueue = new Queue<Droplet>();
+			_drops = new Dictionary<uint, List<Droplet>>();
 			_decodedData = new byte[_K][];
 			CaughtDrops = 0;
 
@@ -35,7 +39,23 @@ namespace LubyTransform
 
 		public void Catch (Droplet block)
 		{
-			_dropQueue.Enqueue (block);
+			uint degree = (uint)block.Neighbours.Count;
+
+			if (degree > _maxCaughtDegree)
+			{
+				_maxCaughtDegree = degree;
+			}
+
+			if (degree < _minCaughtDegree)
+			{
+				_minCaughtDegree = degree;
+			}
+
+			if (_drops.ContainsKey (degree) == false)
+			{
+				_drops.Add (degree, new List<Droplet> ());
+			}
+			_drops [degree].Add (block);
 			CaughtDrops++;
 		}
 
@@ -61,36 +81,100 @@ namespace LubyTransform
 			List<int> neighbours;
 			int neighbourOffset;
 			Droplet d;
+			List<Droplet> dropList;
 
-			while (_dropQueue.Count >= 1)
+//			PrintDrops ();
+
+			for (uint degree=_minCaughtDegree; degree<=_maxCaughtDegree; degree++)
 			{
-				d = _dropQueue.Dequeue ();
-				neighbours = d.Neighbours;
-
-				if (neighbours.Count > 1)
+				if (_drops.ContainsKey (degree) == false)
 				{
-					Solve (d, neighbours);
+					continue;
 				}
-				else
-				{
-					neighbourOffset = neighbours[0];
-					if (_decodedData[neighbourOffset] == null)
-					{
-						_decodedData[neighbourOffset] = new byte[_blockSize];
 
-						// No neighbours? Means the actual data is contained in this droplet
-						Array.Copy (d.Data, _decodedData[neighbourOffset], _blockSize);
+				dropList = _drops [degree];
+//				while (dropQueue.Count >= 1)
+				for (int dropletIndex=0; dropletIndex<dropList.Count; dropletIndex++)
+				{
+					d = dropList [dropletIndex];
+					neighbours = d.Neighbours;
+
+					if (neighbours.Count > 1)
+					{
+						if (Solve (d, neighbours) == false)
+						{
+							// Isnt useful anymore
+							dropList.RemoveAt (dropletIndex);
+						}
+
+					}
+					else
+					{
+						neighbourOffset = neighbours[0];
+						if (_decodedData[neighbourOffset] == null)
+						{
+							_decodedData[neighbourOffset] = new byte[_blockSize];
+
+							// No neighbours? Means the actual data is contained in this droplet
+							Array.Copy (d.Data, _decodedData[neighbourOffset], _blockSize);
+						}
 					}
 				}
+				_drops.Remove (degree);
 			}
+
+//			PrintProgress ();
+
+			_minCaughtDegree = UInt32.MaxValue;
+			_maxCaughtDegree = 0;
 
 			return Merge (_decodedData);
 		}
 
-		private void Solve (Droplet d, List<int> neighbours)
+		private void PrintProgress ()
+		{
+			for (int i=0; i<_K; i++)
+			{
+				if (_decodedData[i] == null)
+				{
+					Console.WriteLine ("[{0}]: N", i);
+				}
+				else
+				{
+					Console.WriteLine ("[{0}]: Y", i);
+				}
+			}
+		}
+
+		private void PrintDrops ()
+		{
+			List<Droplet> dropList;
+
+			for (uint degree=_minCaughtDegree; degree<=_maxCaughtDegree; degree++)
+			{
+				if (_drops.ContainsKey (degree) == false)
+				{
+					continue;
+				}
+
+				dropList = _drops [degree];
+				foreach (Droplet d in dropList)
+				{
+					Console.Write ("D: {0}, N: ", d.Neighbours.Count);
+					for (int i=0; i<d.Neighbours.Count; i++)
+					{
+						Console.Write ("{0},", d.Neighbours [i]);
+					}
+					Console.WriteLine ();
+				}
+			}
+		}
+
+		private bool Solve (Droplet d, List<int> neighbours)
 		{
 			int solvingFor;
 			int neighbourIndex;
+			bool isUseful = false;
 
 			for (int index=0; index<neighbours.Count; index++)
 			{
@@ -113,14 +197,17 @@ namespace LubyTransform
 
 						if (_decodedData [neighbourIndex] == null)
 						{
-							// We can solve, bomb out
+							// We cant solve, bomb out
 							_decodedData [solvingFor] = null;
+							isUseful = true;
 							break;
 						}
 						XorInto (_decodedData [solvingFor], _decodedData [neighbourIndex]);
 					}
 				}
 			}
+
+			return isUseful;
 		}
 
 		private static void XorInto (byte[] target, byte[] data)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using LubyTransform.Distributions;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace LubyTransform
@@ -11,9 +12,13 @@ namespace LubyTransform
 
 		public int BlockSize { get; private set; } 	
 
-		private Soliton _solDist;
+//		private Soliton _solDist;
+
+		private IDistribution _dist;
 
 		private byte[][] _data;
+
+		private RandomNumberGenerator _neighbourSelector; 
 
 		public int PaddedSize
 		{
@@ -51,22 +56,19 @@ namespace LubyTransform
 			Size = length;
 			K = (int)Math.Ceiling ((double)length / (double)blockSize);
 			BlockSize = blockSize;
+			_dist  = new Soliton (this.K, 0.12, 1.0);
+//			_neighbourSelector = new Random ((int)DateTime.Now.Ticks);
+			_neighbourSelector = RNGCryptoServiceProvider.Create ();
 
-			try 
-			{
-				_solDist = new Soliton(this.K, 1.0, 0.01);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine (e.Message);
-			}
+//			_dist = new GoldenGate (K, 5, BlockSize, 0.5);
+//			_dist = new Ramping (K, (double)1, 20);
 		}
 
 		public int BlocksNeeded
 		{
 			get
 			{
-				return _solDist.BlocksNeeded;
+				return _dist.EstimateBlocks;
 			}
 		}
 
@@ -79,20 +81,25 @@ namespace LubyTransform
 		public Droplet BuildBlock ()
 		{
 			Droplet encodingBlock = null;
-			Random rGen1 = new Random ();
-			Random rGen2 = new Random ();
+			Random rGen1 = new Random ((int)DateTime.Now.Ticks);
 			int seed;
 			int d=0, neighbourOffset;
 
 			seed = rGen1.Next (); 
-			d = _solDist.Robust (seed);
-			rGen2 = new Random (seed);
+			d = _dist.Degree (seed);
 			encodingBlock = new Droplet(seed, d, BlockSize);
+
+//			for (int a=0; a<d; a++)
+//			{
+//				Console.Write ("=");
+//			}
+//			Console.WriteLine ();
 
 			for (int numNeighbours=1; numNeighbours<=d; numNeighbours++)
 			{
 				// Get a block offset
-				neighbourOffset = rGen2.Next (K); 
+//				neighbourOffset = _neighbourSelector.Next (K);
+				neighbourOffset = NextRandomInt (K);
 				if (encodingBlock.Neighbours.Contains (neighbourOffset) == true)
 				{
 					// No point in allowing duplicate neighbours, is just wasted processing time...
@@ -112,6 +119,18 @@ namespace LubyTransform
 			}
 
 			return (encodingBlock);
+		}
+
+		private int NextRandomInt (int max)
+		{
+			byte[] intBytes = new byte[4];
+
+			_neighbourSelector.GetBytes (intBytes);
+
+			double val = BitConverter.ToUInt32 (intBytes, 0);
+			val /= UInt32.MaxValue;
+
+			return (int)Math.Round(val * (max - 1));
 		}
 
 		/**
