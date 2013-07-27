@@ -71,11 +71,11 @@ namespace ConsoleTests
 
 		public static void EncodeDecode ()
 		{
-			byte[] origFile = BuildRandomFile (1122);
+			byte[] origFile = BuildRandomFile (11224);
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, 100);
+			MyEncoder enc = new MyEncoder (origFile, 10);
 			MyDecoder dec = new MyDecoder (enc.K, 
 			                               enc.BlockSize, 
 			                               enc.BlocksNeeded,

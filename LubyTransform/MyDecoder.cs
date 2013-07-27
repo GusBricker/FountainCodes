@@ -82,51 +82,58 @@ namespace LubyTransform
 			int neighbourOffset;
 			Droplet d;
 			List<Droplet> dropList;
+			int solved;
+			int totalSolved;
 
 //			PrintDrops ();
 
-			for (uint degree=_minCaughtDegree; degree<=_maxCaughtDegree; degree++)
+			do
 			{
-				if (_drops.ContainsKey (degree) == false)
+				totalSolved = 0;
+
+				for (uint degree=_minCaughtDegree; degree<=_maxCaughtDegree; degree++)
 				{
-					continue;
-				}
-
-				dropList = _drops [degree];
-//				while (dropQueue.Count >= 1)
-				for (int dropletIndex=0; dropletIndex<dropList.Count; dropletIndex++)
-				{
-					d = dropList [dropletIndex];
-					neighbours = d.Neighbours;
-
-					if (neighbours.Count > 1)
+					if (_drops.ContainsKey (degree) == false)
 					{
-						if (Solve (d, neighbours) == false)
-						{
-							// Isnt useful anymore
-							dropList.RemoveAt (dropletIndex);
-						}
-
+						continue;
 					}
-					else
+
+					dropList = _drops [degree];
+					for (int dropletIndex=0; dropletIndex<dropList.Count; dropletIndex++)
 					{
-						neighbourOffset = neighbours[0];
-						if (_decodedData[neighbourOffset] == null)
-						{
-							_decodedData[neighbourOffset] = new byte[_blockSize];
+						d = dropList [dropletIndex];
+						neighbours = d.Neighbours;
 
-							// No neighbours? Means the actual data is contained in this droplet
-							Array.Copy (d.Data, _decodedData[neighbourOffset], _blockSize);
+						if (neighbours.Count > 1)
+						{
+							if (Solve (d, neighbours, out solved) == false)
+							{
+								// Isnt useful anymore
+								dropList.RemoveAt (dropletIndex);
+							}
+							totalSolved += solved;
+						}
+						else
+						{
+							neighbourOffset = neighbours [0];
+							if (_decodedData [neighbourOffset] == null)
+							{
+								_decodedData [neighbourOffset] = new byte[_blockSize];
+								++totalSolved;
+
+								// No neighbours? Means the actual data is contained in this droplet
+								Array.Copy (d.Data, _decodedData [neighbourOffset], _blockSize);
+							}
 						}
 					}
+					_drops.Remove (degree);
 				}
-				_drops.Remove (degree);
-			}
+			} while (totalSolved > 0);
 
 //			PrintProgress ();
 
-			_minCaughtDegree = UInt32.MaxValue;
-			_maxCaughtDegree = 0;
+//			_minCaughtDegree = UInt32.MaxValue;
+//			_maxCaughtDegree = 0;
 
 			return Merge (_decodedData);
 		}
@@ -170,11 +177,13 @@ namespace LubyTransform
 			}
 		}
 
-		private bool Solve (Droplet d, List<int> neighbours)
+		private bool Solve (Droplet d, List<int> neighbours, out int solved)
 		{
 			int solvingFor;
 			int neighbourIndex;
 			bool isUseful = false;
+			bool didSolve;
+			solved = 0;
 
 			for (int index=0; index<neighbours.Count; index++)
 			{
@@ -185,6 +194,7 @@ namespace LubyTransform
 					// Setup the block we are about to decode
 					_decodedData [solvingFor] = new byte[_blockSize];
 					Array.Copy (d.Data, _decodedData[solvingFor], _blockSize);
+					didSolve = true;
 
 					// Try solve this one
 					for (int othersIndex=0; othersIndex<neighbours.Count; othersIndex++)
@@ -200,9 +210,14 @@ namespace LubyTransform
 							// We cant solve, bomb out
 							_decodedData [solvingFor] = null;
 							isUseful = true;
+							didSolve = false;
 							break;
 						}
 						XorInto (_decodedData [solvingFor], _decodedData [neighbourIndex]);
+					}
+					if (didSolve == true)
+					{
+						solved++;
 					}
 				}
 			}

@@ -19,6 +19,7 @@ namespace LubyTransform
 		private byte[][] _data;
 
 		private RandomNumberGenerator _neighbourSelector; 
+//		private Random _neighbourSelector;
 
 		public int PaddedSize
 		{
@@ -56,12 +57,12 @@ namespace LubyTransform
 			Size = length;
 			K = (int)Math.Ceiling ((double)length / (double)blockSize);
 			BlockSize = blockSize;
-			_dist  = new Soliton (this.K, 0.12, 1.0);
+//			_dist  = new Soliton (this.K, 0.12, 0.001);
 //			_neighbourSelector = new Random ((int)DateTime.Now.Ticks);
 			_neighbourSelector = RNGCryptoServiceProvider.Create ();
 
 //			_dist = new GoldenGate (K, 5, BlockSize, 0.5);
-//			_dist = new Ramping (K, (double)1, 20);
+			_dist = new Ramping (K, ((double)1/(double)K)*2, 8);
 		}
 
 		public int BlocksNeeded
