@@ -15,6 +15,7 @@ namespace LubyTransform
 		private int _blockSize;
 		private byte[][] _decodedData;
 		private int _originalSize;
+		private const bool _debug = false;
 
 		public MyDecoder (int k, 
 		                  int blockSize, 
@@ -104,12 +105,21 @@ namespace LubyTransform
 						d = dropList [dropletIndex];
 						neighbours = d.Neighbours;
 
+						if (_debug == true)
+						{
+							PrintDrop (d);
+						}
+
 						if (neighbours.Count > 1)
 						{
 							if (Solve (d, neighbours, out solved) == false)
 							{
 								// Isnt useful anymore
 								dropList.RemoveAt (dropletIndex);
+								if (_debug == true)
+								{
+									Console.WriteLine ("T");
+								}
 							}
 							totalSolved += solved;
 						}
@@ -124,16 +134,28 @@ namespace LubyTransform
 								// No neighbours? Means the actual data is contained in this droplet
 								Array.Copy (d.Data, _decodedData [neighbourOffset], _blockSize);
 							}
+							dropList.RemoveAt (dropletIndex);
 						}
 					}
-					_drops.Remove (degree);
+
+					if (_debug == true)
+					{
+						PrintProgress ();
+					}
+
+					if (dropList.Count == 0)
+					{
+						_drops.Remove (degree);
+					}
 				}
 			} while (totalSolved > 0);
 
-//			PrintProgress ();
 
-//			_minCaughtDegree = UInt32.MaxValue;
-//			_maxCaughtDegree = 0;
+			if (_drops.Count == 0)
+			{
+				_minCaughtDegree = UInt32.MaxValue;
+				_maxCaughtDegree = 0;
+			}
 
 			return Merge (_decodedData);
 		}
@@ -151,6 +173,16 @@ namespace LubyTransform
 					Console.WriteLine ("[{0}]: Y", i);
 				}
 			}
+		}
+
+		private void PrintDrop (Droplet d)
+		{
+			Console.Write ("> D: {0}, N: ", d.Neighbours.Count);
+			for (int i=0; i<d.Neighbours.Count; i++)
+			{
+				Console.Write ("{0},", d.Neighbours [i]);
+			}
+			Console.WriteLine ();
 		}
 
 		private void PrintDrops ()

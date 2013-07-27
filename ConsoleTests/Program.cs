@@ -71,11 +71,11 @@ namespace ConsoleTests
 
 		public static void EncodeDecode ()
 		{
-			byte[] origFile = BuildRandomFile (11224);
+			byte[] origFile = BuildRandomFile (12);
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, 10);
+			MyEncoder enc = new MyEncoder (origFile, 2);
 			MyDecoder dec = new MyDecoder (enc.K, 
 			                               enc.BlockSize, 
 			                               enc.BlocksNeeded,
@@ -92,6 +92,7 @@ namespace ConsoleTests
 				decFile = dec.Decode ();
 				if (decFile == null)
 				{
+//					Console.WriteLine ("-------------------");
 					dec.Catch (enc.BuildBlock ());
 					continue;
 				}
