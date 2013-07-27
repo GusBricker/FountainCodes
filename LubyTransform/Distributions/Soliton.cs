@@ -2,7 +2,7 @@ using System;
 
 namespace LubyTransform.Distributions
 {
-	public class Soliton
+	public class Soliton : IDistribution
 	{
 		/// <summary>
 		/// Number of blocks to be encoded.
@@ -24,6 +24,8 @@ namespace LubyTransform.Distributions
 		/// </summary>
 		private double _beta; 
 
+		private Random _rand;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LubyTransform.Soliton"/> class.
 		/// </summary>
@@ -39,6 +41,7 @@ namespace LubyTransform.Distributions
 		public Soliton (int k, double c, double delta) 
 		{
 			int i;
+			_rand = new Random ((int)DateTime.Now.Ticks);
 
 			if (k > 0 && c > 0 && delta >= 0 && delta <= 1)
 			{
@@ -147,11 +150,9 @@ namespace LubyTransform.Distributions
 		/// <returns>
 		/// Random degree number, according to the robust soliton probability distribution.
 		/// </returns>
-		public int Robust (int seed) 
+		public int Degree (int seed) 
 		{
-			Random rGen = new Random(seed);		
-
-			double r = rGen.NextDouble ();
+			double r = _rand.NextDouble ();
 			double sum = 0;
 			int d = 0;
 
@@ -171,7 +172,7 @@ namespace LubyTransform.Distributions
 		/// The number of encoded packets required at the receiving end to ensure 
 		/// that the decoding can run to completion, with probability at least 1-delta.
 		/// </value>
-		public int BlocksNeeded
+		public int EstimateBlocks 
 		{
 			get
 			{
