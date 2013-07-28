@@ -36,11 +36,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Maths\IMatrixSolver.cs" />
     <Compile Include="Maths\MatrixSolver.cs" />
-    <Compile Include="Transform\Decode.cs" />
-    <Compile Include="Transform\Encode.cs" />
-    <Compile Include="Transform\IDecode.cs" />
-    <Compile Include="Transform\IEncode.cs" />
-    <Compile Include="Transform\Drop.cs" />
     <Compile Include="Distributions\Soliton.cs" />
     <Compile Include="Transform\JTransform.cs" />
     <Compile Include="MyEncoder.cs" />
