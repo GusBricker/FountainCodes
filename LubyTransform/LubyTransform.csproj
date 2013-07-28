@@ -38,12 +38,13 @@
     <Compile Include="Maths\MatrixSolver.cs" />
     <Compile Include="Distributions\Soliton.cs" />
     <Compile Include="Transform\JTransform.cs" />
-    <Compile Include="MyEncoder.cs" />
-    <Compile Include="MyDecoder.cs" />
     <Compile Include="Transform\Droplet.cs" />
     <Compile Include="Distributions\GoldenGate.cs" />
     <Compile Include="Distributions\IDistribution.cs" />
     <Compile Include="Distributions\Ramping.cs" />
+    <Compile Include="Transform\MyDecoder.cs" />
+    <Compile Include="Transform\MyEncoder.cs" />
+    <Compile Include="Transform\MyDecoder2.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace LubyTransform
+namespace LubyTransform.Transform
 {
 	public class MyDecoder
 	{
@@ -40,7 +40,7 @@ namespace LubyTransform
 
 		public void Catch (Droplet block)
 		{
-			uint degree = (uint)block.Neighbours.Count;
+			uint degree = (uint)block.Degree;
 
 			if (degree > _maxCaughtDegree)
 			{
@@ -56,6 +56,17 @@ namespace LubyTransform
 			{
 				_drops.Add (degree, new List<Droplet> ());
 			}
+
+			List<Droplet> dropList = _drops [degree];
+			for (int dropIndex=0; dropIndex<dropList.Count; dropIndex++)
+			{
+				if (dropList[dropIndex].Equals (block) == true)
+				{
+					// If any drops the same, dont even bother putting in list
+					return;
+				}
+			}
+
 			_drops [degree].Add (block);
 			CaughtDrops++;
 		}
@@ -116,6 +127,7 @@ namespace LubyTransform
 							{
 								// Isnt useful anymore
 								dropList.RemoveAt (dropletIndex);
+								dropletIndex--;
 								if (_debug == true)
 								{
 									Console.WriteLine ("T");

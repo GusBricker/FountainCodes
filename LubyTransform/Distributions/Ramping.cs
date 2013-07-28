@@ -13,12 +13,13 @@ namespace LubyTransform.Distributions
 		                double maxRate,
 		                double maxDegree)
 		{
+			_K = K;
 			_maxRate = maxRate;
 			_maxDegree = maxDegree;
 			_lastDegree = 1.0;
 		}
 
-		public int Degree (int seed)
+		public int Degree ()
 		{
 //			Random r = new Random (seed);
 //

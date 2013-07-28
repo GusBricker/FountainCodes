@@ -150,7 +150,7 @@ namespace LubyTransform.Distributions
 		/// <returns>
 		/// Random degree number, according to the robust soliton probability distribution.
 		/// </returns>
-		public int Degree (int seed) 
+		public int Degree () 
 		{
 			double r = _rand.NextDouble ();
 			double sum = 0;

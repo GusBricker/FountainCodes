@@ -18,11 +18,6 @@ namespace LubyTransform
 		public List<int> _neighbours;
 
 		/**
-	 * Seed used in the soliton distribution, when calculating the degree of this packet.
-	 */
-		public long Seed { get; set; }
-
-		/**
 	 * Degree of this packet.
 	 */
 		public int Degree { get; set; }
@@ -43,9 +38,8 @@ namespace LubyTransform
 	 * @param degree Degree of this packet.
 	 * @param blockSize Size of the encoded content on the packet.
 	 */
-		public Droplet (long seed, int degree, int blockSize){
+		public Droplet (int degree, int blockSize){
 			_neighbours = new List<int>();
-			Seed = seed;
 			Degree = degree;
 			BlockSize = blockSize;
 			_data = new byte[blockSize];
@@ -57,7 +51,6 @@ namespace LubyTransform
 	 */
 		public Droplet (Droplet b){
 			_neighbours = b.Neighbours;
-			Seed = b.Seed;
 			Degree = b.Degree;
 			BlockSize = b.BlockSize;
 			_data = b.Data;
@@ -122,6 +115,25 @@ namespace LubyTransform
 		public object Clone ()
 		{
 			return (new Droplet(this));
+		}
+
+		public override bool Equals (object o)
+		{
+			Droplet d = (Droplet)o;
+			if (Degree != d.Degree)
+			{
+				return false;
+			}
+
+			for (int neighbourIndex=0; neighbourIndex<Neighbours.Count; neighbourIndex++)
+			{
+				if (Neighbours.Contains (d.Neighbours[neighbourIndex]) == false)
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 	}

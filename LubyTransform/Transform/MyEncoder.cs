@@ -4,7 +4,7 @@ using LubyTransform.Distributions;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace LubyTransform
+namespace LubyTransform.Transform
 {
 	public class MyEncoder
 	{
@@ -57,12 +57,13 @@ namespace LubyTransform
 			Size = length;
 			K = (int)Math.Ceiling ((double)length / (double)blockSize);
 			BlockSize = blockSize;
-//			_dist  = new Soliton (this.K, 0.12, 0.001);
 //			_neighbourSelector = new Random ((int)DateTime.Now.Ticks);
 			_neighbourSelector = RNGCryptoServiceProvider.Create ();
 
+			_dist  = new Soliton (this.K, 0.0012, 0.01);
 //			_dist = new GoldenGate (K, 5, BlockSize, 0.5);
-			_dist = new Ramping (K, ((double)1/(double)K)*2, 8);
+//			_dist = new Ramping (K, ((double)1/(double)K)*2, 8);
+//			_dist = new Ramping (K, ((double)1/(double)K)*5, 20);
 		}
 
 		public int BlocksNeeded
@@ -82,13 +83,10 @@ namespace LubyTransform
 		public Droplet BuildBlock ()
 		{
 			Droplet encodingBlock = null;
-			Random rGen1 = new Random ((int)DateTime.Now.Ticks);
-			int seed;
 			int d=0, neighbourOffset;
 
-			seed = rGen1.Next (); 
-			d = _dist.Degree (seed);
-			encodingBlock = new Droplet(seed, d, BlockSize);
+			d = _dist.Degree ();
+			encodingBlock = new Droplet(d, BlockSize);
 
 //			for (int a=0; a<d; a++)
 //			{
@@ -100,13 +98,12 @@ namespace LubyTransform
 			{
 				// Get a block offset
 //				neighbourOffset = _neighbourSelector.Next (K);
-				neighbourOffset = NextRandomInt (K);
-				if (encodingBlock.Neighbours.Contains (neighbourOffset) == true)
+				do
 				{
-					// No point in allowing duplicate neighbours, is just wasted processing time...
-					continue;
-				}
-
+					neighbourOffset = NextRandomInt (K);
+					// Loop until we generate a neighbour that isn't already in the list
+				} while (encodingBlock.Neighbours.Contains (neighbourOffset) == true);
+				
 				encodingBlock.AddNeighbour(neighbourOffset);
 
 				if (numNeighbours == 1)

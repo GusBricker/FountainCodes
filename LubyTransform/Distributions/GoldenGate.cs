@@ -35,9 +35,9 @@ namespace LubyTransform.Distributions
 			}
 		}
 
-		public int Degree (int seed)
+		public int Degree ()
 		{
-			Random r = new Random (seed);
+			Random r = new Random ();
 
 			double v = r.NextDouble ();
 			v *= _maxRate;

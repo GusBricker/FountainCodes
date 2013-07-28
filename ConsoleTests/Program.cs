@@ -3,6 +3,7 @@ using LubyTransform;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using LubyTransform.Distributions;
+using LubyTransform.Transform;
 
 namespace ConsoleTests
 {
@@ -20,11 +21,10 @@ namespace ConsoleTests
 		{
 			GoldenGate g = new GoldenGate (count/2, 4.8, 10, 4);
 			int max;
-			Random r = new Random ();
 
 			for (int i=0; i<count; i++)
 			{
-				max = g.Degree (r.Next (count));
+				max = g.Degree ();
 
 				for (int a=0; a<max; a++)
 				{
@@ -38,11 +38,10 @@ namespace ConsoleTests
 		{
 			Soliton s = new Soliton (count, 0.01, 0.01);
 			int max;
-			Random r = new Random ();
 
 			for (int i=0; i<count; i++)
 			{
-				max = s.Degree (r.Next (count));
+				max = s.Degree ();
 
 				for (int a=0; a<max; a++)
 				{
@@ -71,11 +70,11 @@ namespace ConsoleTests
 
 		public static void EncodeDecode ()
 		{
-			byte[] origFile = BuildRandomFile (12);
+			byte[] origFile = BuildRandomFile (121294);
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, 2);
+			MyEncoder enc = new MyEncoder (origFile, 50);
 			MyDecoder dec = new MyDecoder (enc.K, 
 			                               enc.BlockSize, 
 			                               enc.BlocksNeeded,
@@ -105,6 +104,7 @@ namespace ConsoleTests
 					                   enc.K,
 					                   enc.BlockSize);
 					Console.WriteLine ("Efficiency: {0}", (((double)enc.K / (double)dec.CaughtDrops)).ToString ("000.0%"));
+					Console.WriteLine ("Exiting");
 					break;
 				}
 				else
