@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace LubyTransform.Transform
 {
-	public class MyDecoder
+	public class MyDecoder : IDecode
 	{
 		private Dictionary<uint, List<Droplet>> _drops;
-		public int CaughtDrops { get; private set; }
 		private uint _maxCaughtDegree;
 		private uint _minCaughtDegree;
 
@@ -30,13 +29,15 @@ namespace LubyTransform.Transform
 			_blocksNeeded = blocksNeeded;
 			_drops = new Dictionary<uint, List<Droplet>>();
 			_decodedData = new byte[_K][];
-			CaughtDrops = 0;
+			CaughtDroplets = 0;
 
 			for (int i=0; i<_K; i++)
 			{
 				_decodedData [i] = null;
 			}
 		}
+
+		public int CaughtDroplets { get; private set; }
 
 		public void Catch (Droplet block)
 		{
@@ -68,14 +69,14 @@ namespace LubyTransform.Transform
 			}
 
 			_drops [degree].Add (block);
-			CaughtDrops++;
+			CaughtDroplets++;
 		}
 
 		public bool CanTrySolve 
 		{
 			get
 			{
-				if (CaughtDrops < _blocksNeeded)
+				if (CaughtDroplets < _blocksNeeded)
 				{
 					return false;
 				}
@@ -84,10 +85,6 @@ namespace LubyTransform.Transform
 			}
 		}
 
-		/**
-		 * Decodes the blocks in <code>buffer</code>.
-		 * @return <code>Byte array</code> representing the decoded message.
-		 */
 		public byte[] Decode ()
 		{
 			List<int> neighbours;
@@ -96,8 +93,6 @@ namespace LubyTransform.Transform
 			List<Droplet> dropList;
 			int solved;
 			int totalSolved;
-
-//			PrintDrops ();
 
 			do
 			{
@@ -303,11 +298,6 @@ namespace LubyTransform.Transform
 //			return(Merge(_decodedData));
 //		}
 
-		/**
-		 * Merges a matrix into an <code>array</code>
-		 * @param inputBlock Matrix to be merged.
-		 * @return Merged <code>array</code>.
-		 */
 		private byte[] Merge(byte[][] inputBlock){
 
 			int blocks = inputBlock.Length;
@@ -337,18 +327,6 @@ namespace LubyTransform.Transform
 				upTo += _blockSize;
 			}
 
-//			for (int i = 0, ini = 0; i < blocks; i++, ini += _blockSize)
-//			{
-//				if (inputBlock [i] == null)
-//				{
-//					return null;
-//				}
-//
-//				for (int j = 0; j < _blockSize; j++)
-//				{
-//					ret[ini + j] = inputBlock[i][j];
-//				}
-//			}
 			return ret.ToArray();
 		}
 
