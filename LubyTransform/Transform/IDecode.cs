@@ -4,6 +4,10 @@ namespace LubyTransform.Transform
 {
     public interface IDecode
     {
-        bool Decode(IList<Drop> goblet, int blocksCount, int chunkSize, int fileSize, out byte[] data);
+		void Catch (Droplet drop);
+		byte[] Decode ();
+
+		bool CanTrySolve { get; }
+		int CaughtDroplets { get; }
     }
 }

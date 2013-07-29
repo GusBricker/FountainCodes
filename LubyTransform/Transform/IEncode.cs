@@ -4,12 +4,14 @@ namespace LubyTransform.Transform
 {
     public interface IEncode
     {
-        Drop Encode();
+		int K { get; } 
+		int BlockSize { get; }
 
-        int NumberOfBlocks { get; }
+		int PaddedSize { get; }
+		int Size { get; }
+		byte[] Data { get; }
 
-        int ChunkSize { get; }
-
-        int FileSize { get; }
+		int BlocksNeeded { get; }
+		Droplet Encode ();
     }
 }
