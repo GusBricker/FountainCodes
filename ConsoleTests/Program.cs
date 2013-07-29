@@ -70,11 +70,11 @@ namespace ConsoleTests
 
 		public static void EncodeDecode ()
 		{
-			byte[] origFile = BuildRandomFile (121294);
+			byte[] origFile = BuildRandomFile (51212);
 			string origHash = HashBytes (origFile);
 
 
-			MyEncoder enc = new MyEncoder (origFile, 50);
+			TrackingEncoder enc = new TrackingEncoder (origFile, 100);
 			MyDecoder dec = new MyDecoder (enc.K, 
 			                               enc.BlockSize, 
 			                               enc.BlocksNeeded,
@@ -83,7 +83,7 @@ namespace ConsoleTests
 
 			for (int i=0; i<enc.K; i++)
 			{
-				dec.Catch (enc.BuildBlock ());
+				dec.Catch (enc.Encode ());
 			}
 
 			while (true)
@@ -91,19 +91,19 @@ namespace ConsoleTests
 				decFile = dec.Decode ();
 				if (decFile == null)
 				{
-//					Console.WriteLine ("-------------------");
-					dec.Catch (enc.BuildBlock ());
+					dec.Catch (enc.Encode ());
 					continue;
 				}
 
 				if (HashBytes (decFile) == origHash)
 				{
 					Console.WriteLine ("Decoded after: {0}, required: {1}, K: {2}, blocksize: {3}", 
-					                   dec.CaughtDrops,
+					                   dec.CaughtDroplets,
 					                   enc.BlocksNeeded,
 					                   enc.K,
 					                   enc.BlockSize);
-					Console.WriteLine ("Efficiency: {0}", (((double)enc.K / (double)dec.CaughtDrops)).ToString ("000.0%"));
+					Console.WriteLine ("Efficiency: {0}", (((double)enc.K / (double)dec.CaughtDroplets)).ToString ("000.0%"));
+					Console.WriteLine ("Target Efficiency: {0}", (((double)enc.BlocksNeeded / (double)dec.CaughtDroplets)).ToString ("000.0%"));
 					Console.WriteLine ("Exiting");
 					break;
 				}
