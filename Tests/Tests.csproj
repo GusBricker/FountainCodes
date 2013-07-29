@@ -35,9 +35,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SolitonDist.cs" />
-    <Compile Include="LT.cs" />
-    <Compile Include="MyLT.cs" />
+    <Compile Include="SolitonEncoderTests.cs" />
+    <Compile Include="TrackingEncoderTests.cs" />
+    <Compile Include="GenericTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
