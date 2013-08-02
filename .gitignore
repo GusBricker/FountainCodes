@@ -2,6 +2,9 @@
 *.dll
 *.exe
 *.mdb
+!LubyTransform/bin/*/LubyTransform.dll
+!LubyTransform/bin/*/LubyTransform.dll.mdb
+!LubyTransform/bin/*/LubyTransform.xml
 
 # Apple finder files
 .DS_Store

@@ -27,6 +27,6 @@ Global
 		{7ECB11C8-CBA2-47FD-B42E-AE163EE408AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = ConsoleTests\ConsoleTests.csproj
+		StartupItem = LubyTransform\LubyTransform.csproj
 	EndGlobalSection
 EndGlobal

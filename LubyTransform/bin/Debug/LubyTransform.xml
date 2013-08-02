@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LubyTransform</name>
+    </assembly>
+    <members>
+        <member name="F:LubyTransform.Distributions.Soliton._k">
+            <summary>
+            Number of blocks to be encoded.
+            </summary>
+        </member>
+        <member name="F:LubyTransform.Distributions.Soliton._delta">
+            <summary>
+            Admissible failure probability.
+            </summary>
+        </member>
+        <member name="F:LubyTransform.Distributions.Soliton._R">
+            <summary>
+            Parameter used for the Tau() function.
+            </summary>
+        </member>
+        <member name="F:LubyTransform.Distributions.Soliton._beta">
+            <summary>
+            Normalization factor for the robust soliton distribution.
+            </summary>
+        </member>
+        <member name="M:LubyTransform.Distributions.Soliton.#ctor(System.Int32,System.Double,System.Double)">
+            <summary>
+            Initializes a new instance of the <see cref="!:LubyTransform.Soliton" /> class.
+            </summary>
+            <param name="k">
+            Number of blocks to be encoded.
+            </param>
+            <param name="c">
+            Constant
+            </param>
+            <param name="delta">
+            Admissible failure probability.
+            </param>
+        </member>
+        <member name="M:LubyTransform.Distributions.Soliton.Rho(System.Int32)">
+            <summary>
+            Ideal soliton distribution.
+            </summary>
+            <param name="i">
+            Argument for the probability mass function.
+            </param>
+            <returns>
+            Value (respective to input) of the probability mass function.
+            </returns>
+        </member>
+        <member name="M:LubyTransform.Distributions.Soliton.Tau(System.Int32)">
+            <summary>
+            Extra set of values to the elements of mass function of the ideal soliton distribution.
+            </summary>
+            <param name="i">
+            Argument for the probability mass function.
+            </param>
+            <returns>
+            Value (respective to input) of the probability mass function.
+            </returns>
+        </member>
+        <member name="M:LubyTransform.Distributions.Soliton.Mu(System.Int32)">
+            <summary>
+            Robust soliton distribution.
+            </summary>
+            <param name="i">
+            Argument for the probability mass function.
+            </param>
+            <returns>
+            Value (respective to input) of the probability mass function.
+            </returns>
+        </member>
+        <member name="M:LubyTransform.Distributions.Soliton.Degree">
+            <summary>
+            Samples the robust soliton distribution.
+            </summary>
+            <param name="seed">Seed.</param>
+            <returns>
+            Random degree number, according to the robust soliton probability distribution.
+            </returns>
+        </member>
+        <member name="P:LubyTransform.Distributions.Soliton.EstimateBlocks">
+            <summary>
+            Calculates the number of encoded packets required at the receiving end to ensure
+            that the decoding can run to completion, with probability at least 1-delta.
+            </summary>
+            <value>
+            The number of encoded packets required at the receiving end to ensure
+            that the decoding can run to completion, with probability at least 1-delta.
+            </value>
+        </member>
+        <member name="T:LubyTransform.Droplet">
+             * Object that represents an encoded packet.
+             * @author JosŽ Lopes
+             *</member>
+        <member name="F:LubyTransform.Droplet._neighbours">
+            	 * Connections to source packets.</member>
+        <member name="P:LubyTransform.Droplet.Degree">
+            	 * Degree of this packet.</member>
+        <member name="F:LubyTransform.Droplet._data">
+            	 * The encoded content of this packet.</member>
+        <member name="P:LubyTransform.Droplet.BlockSize">
+            	 * Size of the encoded content.</member>
+        <member name="M:LubyTransform.Droplet.#ctor(System.Int32,System.Int32)">
+            	 * Creates a new instance of <code>Block</code>.
+            	 * @param seed Value to be used as a seed for the soliton distribution.
+            	 * @param degree Degree of this packet.
+            	 * @param blockSize Size of the encoded content on the packet.</member>
+        <member name="M:LubyTransform.Droplet.#ctor(LubyTransform.Droplet)">
+            	 * Creates a new instance of <code>Block</code>, equal to another instance.
+            	 * @param b Instance of <code>Block</code>, from which the values of the new instance will be taken.</member>
+        <member name="P:LubyTransform.Droplet.Neighbours">
+            	 * Returns (a copy of) the list of connections this packet has with the source packets.
+            	 * @return A copy of the list of connections this packet has with the source packets.</member>
+        <member name="P:LubyTransform.Droplet.Data">
+            	 * Returns the encoded content of this packet.
+            	 * @return The encoded content of this packet.</member>
+        <member name="M:LubyTransform.Droplet.AddNeighbour(System.Int32)">
+            	 * Adds a new element to the list of connections this packet has with the source packets.
+            	 * @param i New element for the list of connections this packet has with the source packets.</member>
+        <member name="M:LubyTransform.Droplet.RemoveNeighbour(System.Int32)">
+            	 * Removes a connection from the list of connections this packet has with the source packets.
+            	 * @param i Element (Object, not index) to be removed from the list of connections this packet has with the source packets.</member>
+        <member name="M:LubyTransform.Droplet.Clone">
+            	 * Returns a deep copy of this packet.
+            	 * @return A deep copy of this packet.</member>
+    </members>
+</doc>
