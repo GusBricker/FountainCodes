@@ -80,7 +80,7 @@ namespace ConsoleTests
 
 			IEncode enc = new TrackingEncoder (origFile, 100);
 //			IEncode enc = new SolitonEncoder (origFile, 100);
-			MyDecoder dec = new MyDecoder (enc.K, 
+			Decoder dec = new Decoder (enc.K, 
 			                               enc.BlockSize, 
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -156,7 +156,7 @@ namespace ConsoleTests
 
 
 			TrackingEncoder enc = new TrackingEncoder (origFile, 100);
-			MyDecoder dec = new MyDecoder (enc.K, 
+			Decoder dec = new Decoder (enc.K, 
 			                               enc.BlockSize, 
 			                               enc.BlocksNeeded,
 			                               enc.Size);

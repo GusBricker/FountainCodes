@@ -14,7 +14,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           10);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -32,7 +32,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           10);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -50,7 +50,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           10);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -68,7 +68,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           100);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -86,7 +86,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           100);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -104,7 +104,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           100);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -121,7 +121,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           1000);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -139,7 +139,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           1000);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -157,7 +157,7 @@ namespace Tests
 
 			TrackingEncoder enc = new TrackingEncoder (data,
 			                                           150);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);

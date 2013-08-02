@@ -16,7 +16,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         10);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -34,7 +34,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         10);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -52,7 +52,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         10);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -70,7 +70,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         100);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -88,7 +88,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         100);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -106,7 +106,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         100);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -123,7 +123,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         1000);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -141,7 +141,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         1000);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
@@ -159,7 +159,7 @@ namespace Tests
 
 			SolitonEncoder enc = new SolitonEncoder (data,
 			                                         150);
-			MyDecoder dec = new MyDecoder (enc.K,
+			Decoder dec = new Decoder (enc.K,
 			                               enc.BlockSize,
 			                               enc.BlocksNeeded,
 			                               enc.Size);
