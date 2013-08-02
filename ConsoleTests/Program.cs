@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using LubyTransform.Distributions;
 using LubyTransform.Transform;
+using LubyTransform.Helpers;
 
 namespace ConsoleTests
 {
@@ -12,7 +13,8 @@ namespace ConsoleTests
 		public static void Main (string[] args)
 		{
 //			Console.WriteLine ("Hello World!");
-			EncodeDecode ();
+//			EncodeDecode ();
+			EncodeDecodeWithLoss ();
 //			DisplaySoliton (40);
 //			DisplayGoldenGate (40);
 		}
@@ -68,6 +70,85 @@ namespace ConsoleTests
 			return Convert.ToBase64String (hash.ComputeHash (data));
 		}
 
+		public static void EncodeDecodeWithLoss ()
+		{
+			const int successPercent = 90;
+			byte[] origFile = BuildRandomFile (5112);
+			string origHash = HashBytes (origFile);
+			int generatedDroplets;
+
+
+			IEncode enc = new TrackingEncoder (origFile, 100);
+//			IEncode enc = new SolitonEncoder (origFile, 100);
+			MyDecoder dec = new MyDecoder (enc.K, 
+			                               enc.BlockSize, 
+			                               enc.BlocksNeeded,
+			                               enc.Size);
+			byte[] decFile;
+			Droplet droplet;
+			generatedDroplets = 0;
+
+			for (int i=0; i<enc.K; i++)
+			{
+				droplet = enc.Encode ();
+				++generatedDroplets;
+
+				if (WeightedDiceRoll (successPercent))
+				{
+					dec.Catch (droplet);
+				}
+			}
+
+			while (true)
+			{
+				decFile = dec.Decode ();
+				if (decFile == null)
+				{
+					droplet = enc.Encode ();
+					++generatedDroplets;
+
+					if (WeightedDiceRoll (successPercent))
+					{
+						dec.Catch (droplet);
+					}
+					continue;
+				}
+
+				if (HashBytes (decFile) == origHash)
+				{
+					Console.WriteLine ("Decoded after: {0}, generated: {1}, K: {2}, blocksize: {3}", 
+					                   dec.CaughtDroplets,
+					                   generatedDroplets,
+					                   enc.K,
+					                   enc.BlockSize);
+
+					double efficiency;
+					efficiency = (double)dec.CaughtDroplets / (double)generatedDroplets;
+					efficiency *= 100.0;
+					efficiency = Math.Round (efficiency, 2);
+					Console.WriteLine ("Overhead Efficiency: {0}%", efficiency); 
+
+					efficiency = (double)enc.BlocksNeeded / (double)dec.CaughtDroplets;
+					efficiency *= 100.0;
+					efficiency = Math.Round (efficiency, 2);
+					Console.WriteLine ("Efficiency: {0}%", efficiency); 
+					Console.WriteLine ("Exiting");
+					break;
+				}
+				else
+				{
+					for (int i=0; i<decFile.Length; i++)
+					{
+						Console.WriteLine ("[{0}]: {1} | {2}", 
+						                   i.ToString ("000"),
+						                   origFile [i].ToString ("000"),
+						                   decFile [i].ToString ("000"));
+
+					}
+				}
+			}
+		}
+
 		public static void EncodeDecode ()
 		{
 			byte[] origFile = BuildRandomFile (51212);
@@ -119,6 +200,16 @@ namespace ConsoleTests
 					}
 				}
 			}
+		}
+
+		static CryptoRNGHelper diceRoller = new CryptoRNGHelper ();
+		private static bool WeightedDiceRoll(int headsWeightingPercent)
+		{
+			int decision;
+
+			decision = diceRoller.Next (0, 100);
+
+			return decision < headsWeightingPercent;
 		}
 	}
 }

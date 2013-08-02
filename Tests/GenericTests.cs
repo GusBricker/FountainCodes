@@ -51,7 +51,7 @@ namespace Tests
 				if (decEfficiency < passPercent)
 				{
 					Assert.Fail ("Decoding successful, however efficiency was to low: " +
-								decEfficiency + "%");
+								decEfficiency + "%" + ", wanted: " + passPercent + "%");
 				}
 
 				decFile = dec.Decode ();

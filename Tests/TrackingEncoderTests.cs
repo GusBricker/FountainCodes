@@ -21,7 +21,7 @@ namespace Tests
 
 			GenericTests.EncodeDecodeTest (enc,
 			                               dec,
-			                               85);
+			                               80);
 
 		}
 
@@ -39,7 +39,7 @@ namespace Tests
 
 			GenericTests.EncodeDecodeTest (enc,
 			                               dec,
-			                               85);
+			                               80);
 
 		}
 
@@ -75,7 +75,7 @@ namespace Tests
 
 			GenericTests.EncodeDecodeTest (enc,
 			                               dec,
-			                               85);
+			                               80);
 
 		}
 
@@ -93,7 +93,7 @@ namespace Tests
 
 			GenericTests.EncodeDecodeTest (enc,
 			                               dec,
-			                               85);
+			                               80);
 
 		}
 
@@ -128,7 +128,7 @@ namespace Tests
 
 			GenericTests.EncodeDecodeTest (enc,
 			                               dec,
-			                               85);
+			                               80);
 
 		}
 
@@ -146,7 +146,7 @@ namespace Tests
 
 			GenericTests.EncodeDecodeTest (enc,
 			                               dec,
-			                               85);
+			                               80);
 
 		}
 
