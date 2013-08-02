@@ -26,7 +26,7 @@ namespace LubyTransform.Transform
 
 			_trackingDist = new Tracking (K,
 			                              95,
-			                              100);
+			                              30);
 
 			byte[] padded = Pad (data);
 			_data = Split (padded);

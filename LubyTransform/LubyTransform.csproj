@@ -35,18 +35,17 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Distributions\Soliton.cs" />
-    <Compile Include="Transform\JTransform.cs" />
     <Compile Include="Transform\Droplet.cs" />
     <Compile Include="Distributions\GoldenGate.cs" />
     <Compile Include="Distributions\IDistribution.cs" />
     <Compile Include="Distributions\Ramping.cs" />
-    <Compile Include="Transform\MyDecoder.cs" />
     <Compile Include="Distributions\Tracking.cs" />
     <Compile Include="Transform\IDecode.cs" />
     <Compile Include="Transform\IEncode.cs" />
     <Compile Include="Transform\TrackingEncoder.cs" />
     <Compile Include="Transform\SolitonEncoder.cs" />
     <Compile Include="Helpers\CryptoRNGHelper.cs" />
+    <Compile Include="Transform\Decoder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LubyTransform.Transform
 {
-	public class MyDecoder : IDecode
+	public class Decoder : IDecode
 	{
 		private Dictionary<uint, List<Droplet>> _drops;
 		private uint _maxCaughtDegree;
@@ -16,7 +16,7 @@ namespace LubyTransform.Transform
 		private int _originalSize;
 		private const bool _debug = false;
 
-		public MyDecoder (int k, 
+		public Decoder (int k, 
 		                  int blockSize, 
 		                  int blocksNeeded,
 		                  int originalSize)
